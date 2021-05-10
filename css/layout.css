@@ -39,7 +39,8 @@
 }
 
 .container{
-    margin-left: 200px;
+    max-width: 650px;
+    margin: 0 auto;
 }
 
 .dot_container{

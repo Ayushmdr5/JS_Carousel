@@ -111,7 +111,9 @@ var Slider = function(className, transition, delay){
     {
         (function(newIndex){
             dotArr[i].onclick = function(){
-                
+                clearTimeout(delayInterval)
+                clearInterval(dotTransitionInterval)
+                clearInterval(dotReverseTransitionInterval)
             console.log(newIndex)
                 if(newIndex>index){
                     dotReverse = false
@@ -130,8 +132,6 @@ var Slider = function(className, transition, delay){
 
     var dotTransitionInterval
     function dotTransition(){
-        console.log(imageWrapper.style.left)
-        
         var currentPosition = parseFloat(imageWrapper.style.left);
         if(!currentPosition){
             currentPosition = 0
@@ -153,7 +153,6 @@ var Slider = function(className, transition, delay){
 
     var dotReverseTransitionInterval
     function dotReverseTransition(){
-
         var newPosition = parseFloat(imageWrapper.style.left);
         var targetPosition = -(index * 640)
 
@@ -173,12 +172,18 @@ var Slider = function(className, transition, delay){
     rightArrow.addEventListener('click', function(){
         if(index<imageCount-1){
             clearTimeout(delayInterval)
+            clearInterval(dotTransitionInterval)
+            clearInterval(dotReverseTransitionInterval)
+            clearInterval(transitionInternval)
             animate();
         }
     })
     leftArrow.addEventListener('click', function(){
         if(index>0){
             clearTimeout(delayInterval)
+            clearInterval(dotTransitionInterval)
+            clearInterval(dotReverseTransitionInterval)
+            clearInterval(transitionInternval)
             reverseAnimate();
         }
     })
@@ -193,87 +198,7 @@ var Slider = function(className, transition, delay){
             }
         }
     }
-
-
-
-//     autoSlider(imageWrapper, 0, imageCount, transition, delay, false)
-
-//     //side arrows
-//     // rightArrow.addEventListener('click', handleRightArrow)
-
-
-
-
-//     function autoSlider(imageWrapper, index, imageCount, transition, delay, reverse){
-//         console.log('index', index)
-//         if (index == imageCount-1){
-//             reverse = true
-//         }
-//         else if (index == 0){
-//             reverse = false
-//         }
-//         console.log(reverse)
-
-//         delayInterval = setTimeout(function(){
-//             if(reverse){
-//                 reverseAnimate(index, imageWrapper, imageCount, transition, delay, true)
-//             } else{
-//                 animate(index, imageWrapper, imageCount, transition, delay, false)
-//             }
-//         },
-//         delay)
-// }
-
-// function animate(index, imageWrapper, imageCount, transition, delay, reverse){
-
-//     var currentLeftPosition = -(index * 640)
-//     var setLeftPosition = currentLeftPosition
-
-//     var transitionInternval = setInterval(() => {
-//         setLeftPosition--
-//         imageWrapper.style.left = setLeftPosition + 'px'
-
-//         if(setLeftPosition < currentLeftPosition - 640){
-//             clearInterval(transitionInternval)
-            
-//             index = index + 1
-//             autoSlider(imageWrapper, index, imageCount, transition, delay, reverse)
-//         }
-//     }, transition);
-// }
-
-// function reverseAnimate(index, imageWrapper, imageCount, transition, delay, reverse){
-//     var currentLeftPosition = -(index * 640)
-//     var setLeftPosition = currentLeftPosition
-
-//     var transitionInternval = setInterval(() => {
-//         setLeftPosition++
-//         imageWrapper.style.left = setLeftPosition + 'px'
-
-//         if(setLeftPosition > currentLeftPosition + 640){
-//             clearInterval(transitionInternval)            
-//             index = index - 1
-//             autoSlider(imageWrapper, index, imageCount, transition, delay, reverse)
-//         }
-//     }, transition);
-// }
-
-//     console.log('last index', index)
 }
-
-// const carousel1 = new Slider('slider-1', 1, 5000)
-
-// const carousel2 = new Slider('slider-2', 2,  1000)
-
-
-
-
-
-
-
-
-
-
 
 
 
