@@ -1,0 +1,70 @@
+.slider{
+    width: 640px;
+    height: 380px;
+    display: inline-block;
+    font-size: 0px;
+    overflow: hidden;
+    position: relative;
+}
+.carousel-image-wrapper{
+    height: 360px;
+    position: absolute;
+}
+
+.left-arrow{
+    height: 360px;
+    width: 50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url('../image/icons/left-i.png')center  no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.left-arrow:hover{
+    opacity: 1;
+}
+.right-arrow{
+    height: 360px;
+    width: 50px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: url('../image/icons/right-i.png')center  no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.right-arrow:hover{
+    opacity: 1;
+}
+
+.container{
+    margin-left: 200px;
+}
+
+.dot_container{
+    width: 100%;
+    position: absolute;
+    bottom: 32px;
+    /* height: 20px; */
+    background: transparent;
+    display: flex;
+    justify-content: center;
+}
+.dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: rgb(228, 228, 228);
+    margin: 0 8px;
+    cursor: pointer;
+    border: 3px solid white;
+    opacity: 0.6;
+}
+.dot:hover {
+    opacity: 1;
+}
+.active{
+    background: white;
+    opacity: 1;
+}
