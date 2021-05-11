@@ -1,223 +1,186 @@
+var Slider = function (className, transition, delay) {
+  this.className = className;
+  this.transition = transition;
+  this.delay = delay;
 
-var Slider = function(className, transition, delay){
-    this.className = className;
-    this.transition = transition;
-    this.delay = delay
+  var index = 0;
+  var transitionInternval;
+  var dotTransitionInterval;
+  var dotReverseTransitionInterval;
+  var delayInterval;
+  var reverse = false;
+  var dotReverse = false;
 
-    var index;
-    index = 0
+  var slider = document.getElementsByClassName(className)[0];
+  var imageWrapper = slider.getElementsByClassName("carousel-image-wrapper")[0];
+  var imageCount = imageWrapper.children.length;
 
-    var slider = document.getElementsByClassName(className)[0]
-    console.log(slider)
-    var imageWrapper = slider.getElementsByClassName('carousel-image-wrapper')[0]
-    var imageCount = imageWrapper.children.length
+  slider.className += " slider";
 
-    slider.className += ' slider'
-    // slider.setAttribute('class', 'slider') 
+  // setting width of image wrapper according to image count
+  var imageWrapperWidth = 640 * imageCount;
+  imageWrapper.style.width = imageWrapperWidth + "px";
 
-    // setting width of image wrapper according to image number
-    var imageWrapperWidth = 640*imageCount
-    imageWrapper.style.width = imageWrapperWidth + 'px'
+  // appending side arrows
+  var leftArrow = document.createElement("div");
+  var rightArrow = document.createElement("div");
+  leftArrow.setAttribute("class", "left-arrow");
+  rightArrow.setAttribute("class", "right-arrow");
+  slider.appendChild(leftArrow);
+  slider.appendChild(rightArrow);
 
-    // appending side arrows
-    var leftArrow = document.createElement('div');
-    leftArrow.setAttribute('class', 'left-arrow')
-    var rightArrow = document.createElement('div');
-    rightArrow.setAttribute('class', 'right-arrow')
+  // appending indicator dots
+  var dot_container = document.createElement("div");
+  dot_container.setAttribute("class", "dot_container");
+  slider.appendChild(dot_container);
 
-    slider.appendChild(leftArrow)
-    slider.appendChild(rightArrow)
+  dotArr = [];
+  for (var i = 0; i < imageCount; i++) {
+    var dot = document.createElement("div");
+    dot.setAttribute("class", "dot");
+    dot_container.appendChild(dot);
+    dotArr.push(dot);
+  }
 
+  autoSlider();
 
-    var dot_container = document.createElement('div')
-    dot_container.setAttribute('class', 'dot_container')
-    slider.appendChild(dot_container)
-    
-    dotArr = []
-    for (var i = 0; i < imageCount; i++){
-        var dot = document.createElement('div')
-        dot.setAttribute('class', 'dot')
-        dot_container.appendChild(dot)
-        dotArr.push(dot)
+  function autoSlider() {
+    setActiveDot();
+    if (index == imageCount - 1) {
+      reverse = true;
+    } else if (index == 0) {
+      reverse = false;
     }
+    delayInterval = setTimeout(function () {
+      if (reverse) {
+        reverseAnimate();
+      } else {
+        animate();
+      }
+    }, delay);
+  }
 
+  // Forward animation
+  function animate() {
+    console.log("animate ", index);
+    var currentLeftPosition = -(index * 640);
+    var setLeftPosition = currentLeftPosition;
 
+    transitionInternval = setInterval(() => {
+      setLeftPosition = setLeftPosition - 2;
+      imageWrapper.style.left = setLeftPosition + "px";
 
-    var reverse = false
-    autoSlider()
+      if (setLeftPosition <= currentLeftPosition - 640) {
+        clearInterval(transitionInternval);
+        clearTimeout(delayInterval);
+        index = index + 1;
+        autoSlider();
+      }
+    }, transition);
+  }
 
-    var delayInterval
+  // Reverse animation
+  function reverseAnimate() {
+    var currentLeftPosition = -(index * 640);
+    var setLeftPosition = currentLeftPosition;
 
+    transitionInternval = setInterval(() => {
+      setLeftPosition = setLeftPosition + 2;
+      imageWrapper.style.left = setLeftPosition + "px";
 
-    function autoSlider(){
-        setActiveDot()
-        if (index == imageCount-1){
-            reverse = true
+      if (setLeftPosition >= currentLeftPosition + 640) {
+        clearInterval(transitionInternval);
+        clearTimeout(delayInterval);
+        index = index - 1;
+        autoSlider();
+      }
+    }, transition);
+  }
+
+  for (var i = 0, len = dotArr.length; i < len; i++) {
+    (function (newIndex) {
+      dotArr[i].onclick = function () {
+        clearTimeout(delayInterval);
+        clearInterval(dotTransitionInterval);
+        clearInterval(dotReverseTransitionInterval);
+        console.log(newIndex);
+        if (newIndex > index) {
+          dotReverse = false;
+        } else if (newIndex < index) {
+          dotReverse = true;
         }
-        else if (index == 0){
-            reverse = false
-        }
+        index = newIndex;
+        clearInterval(transitionInternval);
+        clearTimeout(delayInterval);
+        dotReverse ? dotReverseTransition() : dotTransition();
+      };
+    })(i);
+  }
 
-        delayInterval = setTimeout(function(){
-            if(reverse){
-                reverseAnimate()
-            } else{
-                animate()
-            }
-        },
-        delay)
+  // Forward dot animation
+  function dotTransition() {
+    var currentPosition = parseFloat(imageWrapper.style.left);
+    var targetPosition = -(index * 640);
+    if (!currentPosition) {
+      currentPosition = 0;
     }
+    dotTransitionInterval = setInterval(() => {
+      currentPosition = currentPosition - 2;
+      imageWrapper.style.left = currentPosition + "px";
+      if (currentPosition == targetPosition) {
+        clearInterval(dotTransitionInterval);
+        clearTimeout(delayInterval);
+        autoSlider();
+      }
+    }, transition);
+  }
 
-    var transitionInternval
+  // Backward dot animation
+  function dotReverseTransition() {
+    var newPosition = parseFloat(imageWrapper.style.left);
+    var targetPosition = -(index * 640);
 
-    function animate(){
-        console.log('animate ', index)
-        var currentLeftPosition = -(index * 640)
-        var setLeftPosition = currentLeftPosition
+    dotReverseTransitionInterval = setInterval(() => {
+      newPosition = newPosition + 2;
+      imageWrapper.style.left = newPosition + "px";
+      if (newPosition == targetPosition) {
+        clearInterval(dotReverseTransitionInterval);
+        clearTimeout(delayInterval);
+        autoSlider();
+      }
+    }, transition);
+  }
 
-        transitionInternval = setInterval(() => {
-            setLeftPosition--
-            imageWrapper.style.left = setLeftPosition + 'px'
-
-            if(setLeftPosition < currentLeftPosition - 640){
-                clearInterval(transitionInternval)
-                clearTimeout(delayInterval)
-                index = index + 1
-                autoSlider()
-            }
-        }, transition);
+  // Right arrow handler
+  rightArrow.addEventListener("click", function () {
+    if (index < imageCount - 1) {
+      clearTimeout(delayInterval);
+      clearInterval(dotTransitionInterval);
+      clearInterval(dotReverseTransitionInterval);
+      clearInterval(transitionInternval);
+      animate();
     }
+  });
 
-    function reverseAnimate(){
-        var currentLeftPosition = -(index * 640)
-        var setLeftPosition = currentLeftPosition
-
-        transitionInternval = setInterval(() => {
-            setLeftPosition++
-            imageWrapper.style.left = setLeftPosition + 'px'
-
-            if(setLeftPosition > currentLeftPosition + 640){
-                clearInterval(transitionInternval)     
-                clearTimeout(delayInterval)       
-                index = index - 1
-                autoSlider()
-            }
-        }, transition);
+  // Left arrow handler
+  leftArrow.addEventListener("click", function () {
+    if (index > 0) {
+      clearTimeout(delayInterval);
+      clearInterval(dotTransitionInterval);
+      clearInterval(dotReverseTransitionInterval);
+      clearInterval(transitionInternval);
+      reverseAnimate();
     }
+  });
 
-    var dotReverse = false
-
-    for (var i = 0, len = dotArr.length; i < len; i++)
-    {
-        (function(newIndex){
-            dotArr[i].onclick = function(){
-                clearTimeout(delayInterval)
-                clearInterval(dotTransitionInterval)
-                clearInterval(dotReverseTransitionInterval)
-            console.log(newIndex)
-                if(newIndex>index){
-                    dotReverse = false
-                }
-                else if (newIndex<index){
-                    dotReverse = true
-                }
-                index = newIndex
-                clearInterval(transitionInternval)
-                clearTimeout(delayInterval)
-                // animate(); 
-                dotReverse ? dotReverseTransition() : dotTransition()
-            }    
-        })(i);
+  // Setting current active dot indicator
+  function setActiveDot() {
+    for (var i = 0; i < imageCount; i++) {
+      if (i == index) {
+        dot_container.children[i].className += " active";
+      } else {
+        dot_container.children[i].className = "dot";
+      }
     }
-
-    var dotTransitionInterval
-    function dotTransition(){
-        var currentPosition = parseFloat(imageWrapper.style.left);
-        if(!currentPosition){
-            currentPosition = 0
-        }
-        var targetPosition = -(index * 640)
-
-        console.log('from dot', currentPosition, targetPosition )
-        dotTransitionInterval = setInterval(() => {
-            currentPosition--
-            imageWrapper.style.left = currentPosition + 'px'
-            if(currentPosition==targetPosition){
-                console.log('reached')
-                clearInterval(dotTransitionInterval)
-                clearTimeout(delayInterval)
-                autoSlider()
-            }
-        }, transition)
-    }
-
-    var dotReverseTransitionInterval
-    function dotReverseTransition(){
-        var newPosition = parseFloat(imageWrapper.style.left);
-        var targetPosition = -(index * 640)
-
-        console.log('from dot', newPosition, targetPosition )
-        dotReverseTransitionInterval = setInterval(() => {
-            newPosition++
-            imageWrapper.style.left = newPosition + 'px'
-            if(newPosition==targetPosition){
-                console.log('reached')
-                clearInterval(dotReverseTransitionInterval)
-                clearTimeout(delayInterval)
-                autoSlider()
-            }
-        }, transition)
-    }
-
-    rightArrow.addEventListener('click', function(){
-        if(index<imageCount-1){
-            clearTimeout(delayInterval)
-            clearInterval(dotTransitionInterval)
-            clearInterval(dotReverseTransitionInterval)
-            clearInterval(transitionInternval)
-            animate();
-        }
-    })
-    leftArrow.addEventListener('click', function(){
-        if(index>0){
-            clearTimeout(delayInterval)
-            clearInterval(dotTransitionInterval)
-            clearInterval(dotReverseTransitionInterval)
-            clearInterval(transitionInternval)
-            reverseAnimate();
-        }
-    })
-
- 
-    function setActiveDot(){
-        for (var i=0; i<imageCount; i++){
-            if (i==index){
-                dot_container.children[i].className += ' active'
-            } else{
-                dot_container.children[i].className = 'dot'
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }
+};

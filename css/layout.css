@@ -1,6 +1,6 @@
 .slider{
     width: 640px;
-    height: 380px;
+    height: 360px;
     display: inline-block;
     font-size: 0px;
     overflow: hidden;
@@ -46,8 +46,7 @@
 .dot_container{
     width: 100%;
     position: absolute;
-    bottom: 32px;
-    /* height: 20px; */
+    bottom: 15px;
     background: transparent;
     display: flex;
     justify-content: center;
